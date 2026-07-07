@@ -19,7 +19,7 @@
 
     <select id="selectBoardList" resultMap="boardResultMap">
         SELECT BOARD_ID, TITLE, DESC, SORT_ORDER,
-               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+               REG_DTTM, REG_ID, REG_IP, UPD_DTTM, UPD_ID, UPD_IP, DEL_YN, USE_YN
         FROM BOARD_MASTER
         WHERE DEL_YN = 'N'
         ORDER BY SORT_ORDER ASC
