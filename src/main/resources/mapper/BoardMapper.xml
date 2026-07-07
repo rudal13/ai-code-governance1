@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boardbad.mapper.BoardMapper">
+
+    <resultMap id="boardResultMap" type="com.example.boardbad.vo.BoardMasterVO">
+        <id     property="boardId"   column="BOARD_ID" />
+        <result property="title"     column="TITLE" />
+        <result property="desc"      column="DESC" />
+        <result property="sortOrder" column="SORT_ORDER" />
+        <result property="regDttm"   column="REG_DTTM" />
+        <result property="regUser"  column="REG_USER" />
+        <result property="regIp"     column="REG_IP" />
+        <result property="updDttm"  column="UPD_DTTM" />
+        <result property="updUser"  column="UPD_USER" />
+        <result property="updIp"     column="UPD_IP" />
+        <result property="delYn"     column="DEL_YN" />
+        <result property="useYn"     column="USE_YN" />
+    </resultMap>
+
+    <select id="selectBoardList" resultMap="boardResultMap">
+        SELECT BOARD_ID, TITLE, DESC, SORT_ORDER,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM BOARD_MASTER
+        WHERE DEL_YN = 'N'
+        ORDER BY SORT_ORDER ASC
+    </select>
+
+    <select id="selectBoard" parameterType="string" resultMap="boardResultMap">
+        SELECT BOARD_ID, TITLE, DESC, SORT_ORDER,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM BOARD_MASTER
+        WHERE BOARD_ID = #{boardId}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insertBoard" parameterType="com.example.boardbad.vo.BoardMasterVO">
+        INSERT INTO BOARD_MASTER (
+            BOARD_ID, TITLE, DESC, SORT_ORDER,
+            REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        ) VALUES (
+            #{boardId}, #{title}, #{desc}, #{sortOrder},
+            #{regDttm}, #{regUser}, #{regIp}, #{updDttm}, #{updUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+</mapper>

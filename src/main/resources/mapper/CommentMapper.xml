@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.board.mapper.CommentMapper">
+
+    <resultMap id="commentResultMap" type="com.example.board.vo.CommentVO">
+        <id     property="cmtId"   column="CMT_ID" />
+        <result property="postId" column="POST_ID" />
+        <result property="mbrId"   column="MBR_ID" />
+        <result property="mbrNm"   column="MBR_NM" />
+        <result property="content" column="CONTENT" />
+        <result property="regDttm" column="REG_DTTM" />
+        <result property="regUser" column="REG_USER" />
+        <result property="regIp"   column="REG_IP" />
+        <result property="updDttm" column="UPD_DTTM" />
+        <result property="updUser" column="UPD_USER" />
+        <result property="updIp"   column="UPD_IP" />
+        <result property="delYn"   column="DEL_YN" />
+        <result property="useYn"   column="USE_YN" />
+    </resultMap>
+
+    <select id="selectCommentList" parameterType="string" resultMap="commentResultMap">
+        SELECT C.CMT_ID, C.POST_ID, C.MBR_ID, M.NM AS MBR_NM, C.CONTENT,
+               C.REG_DTTM, C.REG_USER, C.REG_IP, C.UPD_DTTM, C.UPD_USER, C.UPD_IP, C.DEL_YN, C.USE_YN
+        FROM TB_CMT C
+        LEFT JOIN TB_MBR M ON M.MBR_ID = C.MBR_ID
+        WHERE C.POST_ID = #{postId}
+          AND C.DEL_YN = 'N'
+        ORDER BY C.REG_DTTM ASC
+    </select>
+
+    <select id="selectComment" parameterType="string" resultMap="commentResultMap">
+        SELECT C.CMT_ID, C.POST_ID, C.MBR_ID, M.NM AS MBR_NM, C.CONTENT,
+               C.REG_DTTM, C.REG_USER, C.REG_IP, C.UPD_DTTM, C.UPD_USER, C.UPD_IP, C.DEL_YN, C.USE_YN
+        FROM TB_CMT C
+        LEFT JOIN TB_MBR M ON M.MBR_ID = C.MBR_ID
+        WHERE C.CMT_ID = #{cmtId}
+          AND C.DEL_YN = 'N'
+    </select>
+
+    <insert id="insertComment" parameterType="com.example.board.vo.CommentVO">
+        INSERT INTO TB_CMT (
+            CMT_ID, POST_ID, MBR_ID, CONTENT,
+            REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        ) VALUES (
+            #{cmtId}, #{postId}, #{mbrId}, #{content},
+            #{regDttm}, #{regUser}, #{regIp}, #{updDttm}, #{updUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+    <update id="updateComment" parameterType="com.example.board.vo.CommentVO">
+        UPDATE TB_CMT
+        SET CONTENT  = #{content},
+            UPD_DTTM = #{updDttm},
+            UPD_USER = #{updUser},
+            UPD_IP   = #{updIp}
+        WHERE CMT_ID = #{cmtId}
+          AND DEL_YN = 'N'
+    </update>
+
+    <!-- 물리 삭제 대신 논리 삭제(DEL_YN = 'Y')로 처리한다. -->
+    <update id="deleteComment" parameterType="com.example.board.vo.CommentVO">
+        UPDATE TB_CMT
+        SET DEL_YN   = 'Y',
+            UPD_DTTM = #{updDttm},
+            UPD_USER = #{updUser},
+            UPD_IP   = #{updIp}
+        WHERE CMT_ID = #{cmtId}
+    </update>
+
+</mapper>

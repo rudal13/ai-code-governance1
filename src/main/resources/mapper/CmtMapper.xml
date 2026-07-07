@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boardbad.mapper.CmtMapper">
+
+    <resultMap id="commentResultMap" type="com.example.boardbad.vo.CommentData">
+        <id     property="cmtId"   column="CMT_ID" />
+        <result property="postId" column="POST_ID" />
+        <result property="mbrId"   column="MBR_ID" />
+        <result property="text"    column="TEXT" />
+        <result property="regDttm" column="REG_DTTM" />
+        <result property="regUser" column="REG_USER" />
+        <result property="regIp"   column="REG_IP" />
+        <result property="updDttm" column="UPD_DTTM" />
+        <result property="updUser" column="UPD_USER" />
+        <result property="updIp"   column="UPD_IP" />
+        <result property="delYn"   column="DEL_YN" />
+        <result property="useYn"   column="USE_YN" />
+    </resultMap>
+
+    <select id="selectCommentList" parameterType="string" resultMap="commentResultMap">
+        SELECT CMT_ID, POST_ID, MBR_ID, TEXT,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_POST_COMMENT_REPLY_HISTORY_DATA
+        WHERE POST_ID = #{postId}
+          AND DEL_YN = 'N'
+        ORDER BY REG_DTTM ASC
+    </select>
+
+    <select id="selectComment" parameterType="string" resultMap="commentResultMap">
+        SELECT CMT_ID, POST_ID, MBR_ID, TEXT,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_POST_COMMENT_REPLY_HISTORY_DATA
+        WHERE CMT_ID = #{cmtId}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insertComment" parameterType="com.example.boardbad.vo.CommentData">
+        INSERT INTO TB_POST_COMMENT_REPLY_HISTORY_DATA (
+            CMT_ID, POST_ID, MBR_ID, TEXT,
+            REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        ) VALUES (
+            #{cmtId}, #{postId}, #{mbrId}, #{text},
+            #{regDttm}, #{regUser}, #{regIp}, #{updDttm}, #{updUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+</mapper>

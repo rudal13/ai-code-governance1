@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.board.mapper.FileMapper">
+
+    <resultMap id="fileResultMap" type="com.example.board.vo.FileVO">
+        <id     property="fileId"  column="FILE_ID" />
+        <result property="postId" column="POST_ID" />
+        <result property="fileNm" column="FILE_NM" />
+        <result property="path"    column="PATH" />
+        <result property="size"    column="SIZE" />
+        <result property="ext"     column="EXT" />
+        <result property="sortSeq" column="SORT_SEQ" />
+        <result property="regDttm" column="REG_DTTM" />
+        <result property="regUser" column="REG_USER" />
+        <result property="regIp"   column="REG_IP" />
+        <result property="updDttm" column="UPD_DTTM" />
+        <result property="updUser" column="UPD_USER" />
+        <result property="updIp"   column="UPD_IP" />
+        <result property="delYn"   column="DEL_YN" />
+        <result property="useYn"   column="USE_YN" />
+    </resultMap>
+
+    <select id="selectFileList" parameterType="string" resultMap="fileResultMap">
+        SELECT FILE_ID, POST_ID, FILE_NM, PATH, SIZE, EXT, SORT_SEQ,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_FILE
+        WHERE POST_ID = #{postId}
+          AND DEL_YN = 'N'
+        ORDER BY SORT_SEQ ASC, REG_DTTM ASC
+    </select>
+
+    <select id="selectFile" parameterType="string" resultMap="fileResultMap">
+        SELECT FILE_ID, POST_ID, FILE_NM, PATH, SIZE, EXT, SORT_SEQ,
+               REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_FILE
+        WHERE FILE_ID = #{fileId}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insertFile" parameterType="com.example.board.vo.FileVO">
+        INSERT INTO TB_FILE (
+            FILE_ID, POST_ID, FILE_NM, PATH, SIZE, EXT, SORT_SEQ,
+            REG_DTTM, REG_USER, REG_IP, UPD_DTTM, UPD_USER, UPD_IP, DEL_YN, USE_YN
+        ) VALUES (
+            #{fileId}, #{postId}, #{fileNm}, #{path}, #{size}, #{ext}, #{sortSeq},
+            #{regDttm}, #{regUser}, #{regIp}, #{updDttm}, #{updUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+    <!-- 물리 삭제 대신 논리 삭제(DEL_YN = 'Y')로 처리한다. -->
+    <update id="deleteFile" parameterType="com.example.board.vo.FileVO">
+        UPDATE TB_FILE
+        SET DEL_YN   = 'Y',
+            UPD_DTTM = #{updDttm},
+            UPD_USER = #{updUser},
+            UPD_IP   = #{updIp}
+        WHERE FILE_ID = #{fileId}
+    </update>
+
+</mapper>

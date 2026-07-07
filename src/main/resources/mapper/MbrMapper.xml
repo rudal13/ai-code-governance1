@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boardbad.mapper.MbrMapper">
+
+    <resultMap id="memberResultMap" type="com.example.boardbad.vo.MemberInfo">
+        <id     property="mbrKey"     column="MBR_KEY" />
+        <result property="email"      column="EMAIL" />
+        <result property="pwd"        column="PWD" />
+        <result property="nm"         column="NM" />
+        <result property="nick"       column="NICK" />
+        <result property="telNo"      column="TEL_NO" />
+        <result property="statCode"   column="STAT_CODE" />
+        <result property="createDttm" column="CREATE_DTTM" />
+        <result property="regUser"   column="REG_USER" />
+        <result property="regIp"      column="REG_IP" />
+        <result property="updDate"   column="UPD_DATE" />
+        <result property="updUser"   column="UPD_USER" />
+        <result property="updIp"      column="UPD_IP" />
+        <result property="delFlag"   column="DEL_FLAG" />
+        <result property="useYn"      column="USE_YN" />
+    </resultMap>
+
+    <!--
+        [의도적 표준 위반 - MVC-801 / MVC-005]
+        정렬 컬럼명을 화이트리스트 검증 없이 ${sortColumn}으로 그대로 문자열 치환한다.
+        외부 입력값을 검증 없이 받을 경우 SQL Injection에 노출된다.
+    -->
+    <select id="selectMemberList" resultMap="memberResultMap">
+        SELECT MBR_KEY, EMAIL, PWD, NM, NICK, TEL_NO, STAT_CODE,
+               CREATE_DTTM, REG_USER, REG_IP, UPD_DATE, UPD_USER, UPD_IP, DEL_FLAG, USE_YN
+        FROM TB_MEMBERS
+        WHERE DEL_FLAG = 'N'
+        ORDER BY ${sortColumn} DESC
+    </select>
+
+    <select id="selectMember" parameterType="string" resultMap="memberResultMap">
+        SELECT MBR_KEY, EMAIL, PWD, NM, NICK, TEL_NO, STAT_CODE,
+               CREATE_DTTM, REG_USER, REG_IP, UPD_DATE, UPD_USER, UPD_IP, DEL_FLAG, USE_YN
+        FROM TB_MEMBERS
+        <!-- [의도적 표준 위반] PK 조회에도 ${ } 문자열 치환 사용 (#{ } 바인딩을 사용해야 함) -->
+        WHERE MBR_KEY = '${mbrKey}'
+    </select>
+
+    <insert id="insertMember" parameterType="com.example.boardbad.vo.MemberInfo">
+        INSERT INTO TB_MEMBERS (
+            MBR_KEY, EMAIL, PWD, NM, NICK, TEL_NO, STAT_CODE,
+            CREATE_DTTM, REG_USER, REG_IP, UPD_DATE, UPD_USER, UPD_IP, DEL_FLAG, USE_YN
+        ) VALUES (
+            #{mbrKey}, #{email}, #{pwd}, #{nm}, #{nick}, #{telNo}, #{statCode},
+            #{createDttm}, #{regUser}, #{regIp}, #{updDate}, #{updUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+</mapper>

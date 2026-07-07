@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boardbad.mapper.PostMapper">
+
+    <resultMap id="postResultMap" type="com.example.boardbad.vo.PostVO">
+        <id     property="postId"   column="POST_ID" />
+        <result property="boardId" column="BOARD_ID" />
+        <result property="mbrId"    column="MBR_ID" />
+        <result property="title"    column="TITLE" />
+        <result property="content" column="CONTENT" />
+        <result property="viewCount" column="VIEW_COUNT" />
+        <result property="rcmdCnt" column="RCMD_CNT" />
+        <result property="noticeYn" column="NOTICE_YN" />
+        <result property="pinYn"    column="PIN_YN" />
+        <result property="pubYn"    column="PUB_YN" />
+        <result property="rDttm"    column="R_DTTM" />
+        <result property="rUser"    column="R_USER" />
+        <result property="regIp"    column="REG_IP" />
+        <result property="uDttm"    column="U_DTTM" />
+        <result property="uUser"    column="U_USER" />
+        <result property="updIp"    column="UPD_IP" />
+        <result property="delYn"    column="DEL_YN" />
+        <result property="useYn"    column="USE_YN" />
+    </resultMap>
+
+    <!--
+        [의도적 표준 위반 - MVC-801]
+        제목 검색어(titleKeyword)를 #{ } 바인딩이 아닌 ${ } 문자열 치환으로 직접 WHERE 절에 삽입한다.
+        검색어에 SQL 구문(예: ' OR '1'='1)이 포함될 경우 SQL Injection이 발생할 수 있다.
+    -->
+    <select id="selectPostList" resultMap="postResultMap">
+        SELECT POST_ID, BOARD_ID, MBR_ID, TITLE, CONTENT, VIEW_COUNT, RCMD_CNT,
+               NOTICE_YN, PIN_YN, PUB_YN, R_DTTM, R_USER, REG_IP, U_DTTM, U_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_POST
+        WHERE DEL_YN = 'N'
+          AND BOARD_ID = #{boardId}
+        <if test="titleKeyword != null and titleKeyword != ''">
+          AND TITLE LIKE '%${titleKeyword}%'
+        </if>
+        ORDER BY NOTICE_YN DESC, R_DTTM DESC
+    </select>
+
+    <select id="selectPost" parameterType="string" resultMap="postResultMap">
+        SELECT POST_ID, BOARD_ID, MBR_ID, TITLE, CONTENT, VIEW_COUNT, RCMD_CNT,
+               NOTICE_YN, PIN_YN, PUB_YN, R_DTTM, R_USER, REG_IP, U_DTTM, U_USER, UPD_IP, DEL_YN, USE_YN
+        FROM TB_POST
+        WHERE POST_ID = #{postId}
+          AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insertPost" parameterType="com.example.boardbad.vo.PostVO">
+        INSERT INTO TB_POST (
+            POST_ID, BOARD_ID, MBR_ID, TITLE, CONTENT, VIEW_COUNT, RCMD_CNT,
+            NOTICE_YN, PIN_YN, PUB_YN, R_DTTM, R_USER, REG_IP, U_DTTM, U_USER, UPD_IP, DEL_YN, USE_YN
+        ) VALUES (
+            #{postId}, #{boardId}, #{mbrId}, #{title}, #{content}, 0, 0,
+            #{noticeYn}, #{pinYn}, #{pubYn}, #{rDttm}, #{rUser}, #{regIp}, #{uDttm}, #{uUser}, #{updIp}, 'N', 'Y'
+        )
+    </insert>
+
+    <update id="updatePost" parameterType="com.example.boardbad.vo.PostVO">
+        UPDATE TB_POST
+        SET TITLE   = #{title},
+            CONTENT = #{content},
+            U_DTTM  = #{uDttm},
+            U_USER  = #{uUser},
+            UPD_IP  = #{updIp}
+        WHERE POST_ID = #{postId}
+    </update>
+
+    <update id="increaseViewCount" parameterType="string">
+        UPDATE TB_POST SET VIEW_COUNT = VIEW_COUNT + 1 WHERE POST_ID = #{postId}
+    </update>
+
+</mapper>
