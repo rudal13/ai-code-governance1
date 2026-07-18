@@ -23,7 +23,6 @@ public class BoardController {
 
     @GetMapping
     public ApiResponse<List<BoardVO>> getBoardList() {
-        System.out.println("오류테스트");
         return ApiResponse.success(boardService.getBoardList());
     }
 
