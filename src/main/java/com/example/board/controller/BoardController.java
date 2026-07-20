@@ -46,6 +46,7 @@ public class BoardController {
                                              HttpServletRequest request) {
         String updUser = resolveUser(request);
         String updIp = resolveIp(request);
+        System.out.println("오류테스트");
         return ApiResponse.success("게시판이 수정되었습니다.", boardService.updateBoard(boardId, boardVO, updUser, updIp));
     }
 
