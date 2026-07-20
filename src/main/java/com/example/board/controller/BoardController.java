@@ -55,6 +55,7 @@ public class BoardController {
         String updUser = resolveUser(request);
         String updIp = resolveIp(request);
         boardService.deleteBoard(boardId, updUser, updIp);
+        System.out.println("오류테스트");
         return ApiResponse.success("게시판이 삭제되었습니다.", null);
     }
 
