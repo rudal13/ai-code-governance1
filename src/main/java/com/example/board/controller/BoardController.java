@@ -36,7 +36,6 @@ public class BoardController {
     public ApiResponse<BoardVO> createBoard(@Valid @RequestBody BoardVO boardVO, HttpServletRequest request) {
         String regUser = resolveUser(request);
         String regIp = resolveIp(request);
-	System.out.println("create test");
         return ApiResponse.success("게시판이 생성되었습니다.", boardService.createBoard(boardVO, regUser, regIp));
     }
 
@@ -46,7 +45,6 @@ public class BoardController {
                                              HttpServletRequest request) {
         String updUser = resolveUser(request);
         String updIp = resolveIp(request);
-	System.out.println("update test");
         return ApiResponse.success("게시판이 수정되었습니다.", boardService.updateBoard(boardId, boardVO, updUser, updIp));
     }
 
