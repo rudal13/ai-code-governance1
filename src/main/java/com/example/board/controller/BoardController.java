@@ -36,7 +36,6 @@ public class BoardController {
     public ApiResponse<BoardVO> createBoard(@Valid @RequestBody BoardVO boardVO, HttpServletRequest request) {
         String regUser = resolveUser(request);
         String regIp = resolveIp(request);
-        System.out.println("오류테스트");
         return ApiResponse.success("게시판이 생성되었습니다.", boardService.createBoard(boardVO, regUser, regIp));
     }
 
